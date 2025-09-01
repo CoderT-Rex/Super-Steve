@@ -10,6 +10,9 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
+    font = pygame.font.Font(None, 36)
+    score = 0
+    lives = 3
 
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -36,19 +39,36 @@ def main():
         
         for asteroid in asteroids:
             if asteroid.collision(player):
-               print("Game over!")
-               sys.exit()
+                lives -= 1
+                player.position.x = SCREEN_WIDTH / 2
+                player.position.y = SCREEN_HEIGHT / 2
+                player.rotation = 0
+                if lives <= 0:
+                    print("Game over!")
+                    sys.exit()
+                break
 
         for shot in shots:
             for asteroid in asteroids:
                 if asteroid.collision(shot):
                     shot.kill()
                     asteroid.split()
+                    score += 5
 
         screen.fill("black")
 
         for obj in drawable:
             obj.draw(screen)
+        
+        score_text = font.render(f"Salary: ${score}", True, "white")
+        score_rect = score_text.get_rect()
+        score_rect.topright = (SCREEN_WIDTH - 10, 10)
+        screen.blit(score_text, score_rect)
+        
+        lives_text = font.render(f"Vouchers: {lives}", True, "white")
+        lives_rect = lives_text.get_rect()
+        lives_rect.topleft = (10, 10)
+        screen.blit(lives_text, lives_rect)
 
         pygame.display.flip()
         
